@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>IdeaCheck — AI Business Validation</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #6366f1 0%, #a855f7 50%, #ec4899 100%);
+            --bg-color: #f8fafc;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --white: #ffffff;
+            --black: #0f172a;
+            --border-color: #e2e8f0;
+            --accent: #6366f1;
+            --error-bg: #fee2e2;
+            --error-text: #b91c1c;
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .global-container { width: calc(100% - 24px); margin: 0 12px; }
+        @media (min-width: 768px) { .global-container { width: 90%; max-width: 700px; margin: 0 auto; } }
+
+        header.global-container { padding-top: 4rem; padding-bottom: 1.5rem; }
+        
+        .title-gradient {
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+            letter-spacing: -0.05em;
+            font-size: 3rem;
+        }
+
+        .nav-tabs-custom {
+            display: flex; justify-content: center; gap: 2rem;
+            margin: 1.5rem 0;
+        }
+        .tab-btn {
+            background: none; border: none; padding: 0.5rem 0;
+            font-size: 0.85rem; font-weight: 800;
+            color: var(--text-muted); border-bottom: 2px solid transparent; cursor: pointer;
+            transition: all 0.2s; letter-spacing: 0.05em;
+        }
+        .tab-btn.active { color: var(--black); border-bottom: 2px solid var(--black); }
+
+        .custom-textarea {
+            width: 100%; padding: 1.5rem; font-size: 1.1rem; font-weight: 500;
+            border: 1px solid var(--border-color); border-radius: 1.25rem;
+            outline: none; background: var(--white); box-shadow: var(--shadow-lg);
+            transition: border-color 0.2s;
+        }
+
+        .btn-black {
+            background: var(--black); color: var(--white); border: none;
+            padding: 1.25rem 2rem; border-radius: 1rem; font-weight: 700;
+            font-size: 1rem; width: 100%; margin-top: 1rem; transition: transform 0.1s;
+        }
+
+        /* Chat UI */
+        .chat-bubble { border-radius: 1.5rem; padding: 1.75rem; margin-bottom: 2rem; animation: slideUp 0.4s ease-out; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .bubble-user { background: #e0e7ff; color: #3730a3; font-weight: 600; margin-left: auto; max-width: 90%; box-shadow: var(--shadow-lg); }
+        .bubble-model { background: var(--white); border: 1px solid var(--border-color); width: 100%; box-shadow: var(--shadow-lg); }
+
+        /* Results Formatting */
+        .verdict-item { margin-bottom: 1.5rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); position: relative; padding-left: 1.25rem; }
+        .verdict-item::before { content: ""; position: absolute; left: 0; top: 0; bottom: 1.5rem; width: 4px; background: var(--black); border-radius: 2px; }
+        .verdict-item:last-of-type { border-bottom: none; margin-bottom: 0.5rem; }
+        
+        .score-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem; }
+        .score-label { font-weight: 800; font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.12em; }
+        .score-value-wrap { display: flex; align-items: center; gap: 0.75rem; }
+        .score-value { font-size: 1.5rem; font-weight: 800; color: var(--black); }
+        .quality-badge { padding: 0.2rem 0.6rem; border-radius: 0.5rem; font-size: 0.65rem; font-weight: 800; text-transform: uppercase; border: 1.5px solid currentColor; }
+
+        .analysis-text { font-size: 1.05rem; color: #334155; line-height: 1.8; }
+        .affiliate-link { color: var(--accent); font-weight: 700; text-decoration: underline; }
+        
+        /* Strategy Formatting */
+        .strategy-container { padding: 0.5rem 0; }
+        .strategy-title { font-weight: 800; font-size: 1.15rem; color: var(--black); margin-top: 1.5rem; margin-bottom: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.05em; }
+        
+        .list-container { margin: 1rem 0; padding-left: 0; list-style: none; }
+        .list-item { margin-bottom: 1.25rem; display: flex; align-items: flex-start; gap: 0.75rem; }
+        .list-item::before { content: "→"; color: var(--accent); font-weight: bold; flex-shrink: 0; margin-top: 0.1rem; }
+        .list-content { flex: 1; }
+        .list-item strong { color: var(--black); display: block; margin-bottom: 0.25rem; font-size: 1.05rem; }
+
+        .badge-container-wrapper {
+            margin-top: 1rem; display: flex; flex-wrap: wrap; gap: 0.75rem; padding-top: 1.5rem; border-top: 2px dashed var(--border-color);
+        }
+        .strategy-badge {
+            background: #f8fafc; color: var(--black); border: 1px solid #cbd5e1;
+            padding: 0.75rem 1.25rem; border-radius: 3rem; font-size: 0.9rem;
+            font-weight: 700; cursor: pointer; transition: all 0.2s;
+            display: flex; align-items: center; gap: 0.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .strategy-badge:hover { background: var(--black); color: var(--white); border-color: var(--black); transform: translateY(-2px); }
+
+        .read-more-btn { color: var(--accent); background: none; border: none; font-weight: 700; font-size: 0.85rem; padding: 0; cursor: pointer; text-decoration: underline; margin-left: 4px; }
+        
+        .shimmer { background: #edf2f7; height: 120px; border-radius: 1.5rem; animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 0.6; } 50% { opacity: 1; } }
+
+        .alert-box { background: var(--error-bg); color: var(--error-text); padding: 1rem; border-radius: 0.75rem; font-weight: 700; margin-bottom: 1.5rem; display: none; text-align: center; border: 1px solid var(--error-text); }
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+
+    <header class="global-container text-center">
+        <h1 class="title-gradient">IdeaCheck</h1>
+        <nav class="nav-tabs-custom">
+            <button id="nav-validate" class="tab-btn active" onclick="switchMode('validate')">HOW IS MY IDEA</button>
+            <button id="nav-discover" class="tab-btn" onclick="switchMode('discover')">FIND BUSINESS IDEA</button>
+        </nav>
+    </header>
+
+    <main class="global-container">
+        <div id="ui-input-area">
+            <div id="mode-validate">
+                <div id="error-alert-main" class="alert-box">Describe your business idea first.</div>
+                <textarea id="ideaInput" rows="5" class="custom-textarea" placeholder="Describe your business or product idea here..."></textarea>
+                <button class="btn-black" onclick="startValidation()">ANALYZE IDEA</button>
+            </div>
+            
+            <div id="mode-discover" class="hidden text-center">
+                <p class="text-muted mb-4">Pick a category to find high-potential gaps.</p>
+                <div class="d-flex flex-wrap justify-content-center gap-2">
+                    <button class="strategy-badge" onclick="tapNiche('AI SaaS')">AI SaaS</button>
+                    <button class="strategy-badge" onclick="tapNiche('Food/Beverage')">Food & Bev</button>
+                    <button class="strategy-badge" onclick="tapNiche('E-commerce')">E-commerce</button>
+                    <button class="strategy-badge" onclick="tapNiche('Local Services')">Local Services</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="chat-phase" class="hidden">
+            <div id="messages-container"></div>
+            <div id="loading-area" class="hidden"><div class="shimmer"></div></div>
+            <div class="text-center mt-5 mb-5">
+                <button class="btn btn-sm text-muted fw-bold" onclick="location.reload()">START NEW ANALYSIS</button>
+            </div>
+        </div>
+    </main>
+
+    <script type="module">
+        const WORKER_URL = "https://little-queen-f49a.vineetkum25.workers.dev";
+        
+        let chatContext = [];
+        let finalDecisionScore = 0;
+        let businessTypeStr = "this business";
+        let usedBadges = new Set(); 
+
+        // List of affiliate products
+        const affiliateProducts = [
+            { name: "Fridge", desc: "Best fridge for commercial purpose like on icecream truck or small shop.", url: "https://amazon.com" }
+
+            ,{ name: "Amazon Ring Light", desc: "Professional lighting set for product photography and promotional videos.", url: "https://amazon.com" }
+        ];
+
+        window.switchMode = (mode) => {
+            document.getElementById('nav-validate').classList.toggle('active', mode === 'validate');
+            document.getElementById('nav-discover').classList.toggle('active', mode === 'discover');
+            document.getElementById('mode-validate').classList.toggle('hidden', mode !== 'validate');
+            document.getElementById('mode-discover').classList.toggle('hidden', mode !== 'discover');
+        };
+
+        window.tapNiche = (niche) => {
+            businessTypeStr = niche;
+            handleQuery(`Find 3 trending gaps in ${niche}`, getSystemPrompt());
+        };
+
+        function isBusinessContext(text) {
+            const lowerText = text.toLowerCase();
+            const businessKeywords = [
+                'app', 'service', 'sell', 'product', 'business', 'store', 'website', 'platform', 
+                'customer', 'market', 'solution', 'revenue', 'startup', 'company', 'agency', 
+                'shop', 'client', 'software', 'hardware', 'tool', 'restaurant', 'cafe', 
+                'delivery', 'subscription', 'brand', 'manufacture', 'e-commerce', 'consulting'
+            ];
+            const conversationalJunk = ['hi', 'hello', 'how are you', 'tell me a joke', 'who are you', 'hey', 'yo'];
+            if (conversationalJunk.includes(lowerText)) return false;
+            const words = lowerText.split(/\s+/).filter(w => w.length > 0);
+            if (words.length < 3) return false;
+            return businessKeywords.some(keyword => lowerText.includes(keyword));
+        }
+
+        window.startValidation = () => {
+            const val = document.getElementById('ideaInput').value.trim();
+            if (!val || val.length < 5) {
+                showValidationError('error-alert-main', 'Describe your business idea first.');
+                return;
+            }
+            if (!isBusinessContext(val)) {
+                showValidationError('error-alert-main', 'Please write a business, product, or service idea only.');
+                return;
+            }
+            usedBadges.clear();
+            finalDecisionScore = 0; 
+            const words = val.split(' ');
+            businessTypeStr = words.slice(0, 3).join(' ') + (words.length > 3 ? '...' : '');
+            handleQuery(val, getSystemPrompt());
+        };
+
+        window.triggerAction = (type) => {
+            usedBadges.add(type);
+            const prompt = type === 'improve' ? 
+                `[INTERNAL_REQUEST] Give me 3 slight improvement tips (easy addons or simple features) for my business idea. No complex overhauls. NO promotion or marketing tips here.` : 
+                `[INTERNAL_REQUEST] Provide easy promotion tips for ${businessTypeStr}. You MUST split this into TWO sections with these exact titles: 'Free Promotion:' and 'Paid Promotion:' (including a simple budget).`;
+            handleQuery(prompt, getSystemPrompt());
+        };
+
+        function getSystemPrompt() {
+            const affiliateContext = affiliateProducts.map(p => `- ${p.name}: ${p.desc} (URL: ${p.url})`).join('\n');
+            return `You are a professional Startup Analyst.
+STRICT FORMATTING RULES:
+1. NEVER use bolding (**). NEVER use hashtags (#).
+2. For initial analysis, use this EXACT structure:
+   [Problem] Score: X/10. Analysis text...
+   [Idea] Score: X/10. Analysis text...
+   [Should you start this] Score: X/10. Analysis text...
+   [FINAL_SCORE: X]
+3. When providing tips or promotion:
+   - For Improvements: Provide only features/addons. NO marketing talk.
+   - For Promotion: Provide ONLY 'Free Promotion:' and 'Paid Promotion:' sections.
+   - Use bullet points starting with '-' or '*' for each tip.
+   - Keep the title and description on the same line if possible, separated by a colon.
+4. AFFILIATE LINKS: You have access to these recommended products:
+${affiliateContext}
+   - Only include a link if it fits perfectly as a tool recommendation in the Improve or Promote responses.
+   - Format link as: [Product Name](URL). Do NOT force them.
+5. KEEP TIPS SIMPLE and easy to implement.
+6. NEVER invent names. Use the user's description.`;
+        }
+
+        async function handleQuery(text, sys) {
+            document.getElementById('ui-input-area').classList.add('hidden');
+            document.getElementById('chat-phase').classList.remove('hidden');
+            document.querySelectorAll('.badge-container-wrapper').forEach(b => b.remove());
+
+            if (!text.includes("[INTERNAL_REQUEST]")) appendMessage(text, true);
+            
+            const loader = document.getElementById('loading-area');
+            loader.classList.remove('hidden');
+            chatContext.push({ role: "user", parts: [{ text }] });
+
+            try {
+                const response = await fetch(WORKER_URL, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        contents: chatContext,
+                        system_instruction: { parts: [{ text: sys }] }
+                    })
+                });
+                const data = await response.json();
+                const aiText = data.candidates[0].content.parts[0].text;
+                loader.classList.add('hidden');
+                
+                const filtered = aiText.replace(/\*\*/g, '').replace(/#/g, '').trim();
+                appendMessage(filtered, false);
+                chatContext.push({ role: "model", parts: [{ text: filtered }] });
+            } catch (err) {
+                loader.classList.add('hidden');
+                appendMessage("An error occurred. Please try again.", false);
+            }
+        }
+
+        function parseLinks(text) {
+            return text.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" class="affiliate-link">$1</a>');
+        }
+
+        function appendMessage(text, isUser) {
+            const container = document.getElementById('messages-container');
+            const bubble = document.createElement('div');
+            bubble.className = `chat-bubble ${isUser ? 'bubble-user' : 'bubble-model'}`;
+
+            if (!isUser) {
+                const scoreTagMatch = text.match(/\[FINAL_SCORE:\s*(\d+)\]/i);
+                const explicitScoreMatch = text.match(/Should you start this\]?.*?Score:?\s*(\d+)/is);
+                
+                if (scoreTagMatch) {
+                    finalDecisionScore = parseInt(scoreTagMatch[1]);
+                    text = text.replace(/\[FINAL_SCORE:\s*\d+\]/gi, '');
+                } else if (explicitScoreMatch) {
+                    finalDecisionScore = parseInt(explicitScoreMatch[1]);
+                }
+
+                const hasScores = /Problem|Idea|Should you start/i.test(text) && /Score:?\s*\d+/i.test(text);
+                bubble.innerHTML = hasScores ? formatValidation(text) : formatStrategy(text);
+
+                if (finalDecisionScore >= 5) {
+                    const badgeContainer = document.createElement('div');
+                    badgeContainer.className = 'badge-container-wrapper';
+                    let html = "";
+                    if (!usedBadges.has('improve')) html += `<button class="strategy-badge" onclick="triggerAction('improve')">✨ Improve My Idea</button>`;
+                    if (!usedBadges.has('promote')) html += `<button class="strategy-badge" onclick="triggerAction('promote')">📈 How to Promote</button>`;
+                    if(html) {
+                        badgeContainer.innerHTML = html;
+                        bubble.appendChild(badgeContainer);
+                    }
+                }
+            } else {
+                bubble.innerText = text;
+            }
+
+            container.appendChild(bubble);
+            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+        }
+
+        function formatValidation(raw) {
+            const sectionRegex = /\[?\s*(Problem|Idea|Should you start this)\s*\]?.*?Score:?\s*(\d+)\/10/gi;
+            let segments = [];
+            let matches = [...raw.matchAll(sectionRegex)];
+            if (matches.length === 0) return formatStrategy(raw);
+
+            matches.forEach((match, i) => {
+                const nextMatch = matches[i + 1];
+                const start = match.index + match[0].length;
+                const end = nextMatch ? nextMatch.index : raw.length;
+                let segmentText = raw.substring(start, end).trim();
+                segmentText = segmentText.replace(/^[.:\s\-]+/, '');
+                segments.push({ label: match[1], score: match[2], text: segmentText });
+            });
+
+            return segments.map(seg => {
+                const badge = getBadgeProps(seg.score);
+                return `
+                    <div class="verdict-item">
+                        <div class="score-header">
+                            <span class="score-label">${seg.label}</span>
+                            <div class="score-value-wrap">
+                                <span class="score-value">${seg.score}/10</span>
+                                <span class="quality-badge" style="color:${badge.color}; border-color:${badge.color}">${badge.text}</span>
+                            </div>
+                        </div>
+                        <div class="analysis-text">${parseLinks(truncateText(seg.text, 30))}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function formatStrategy(text) {
+            const lines = text.split('\n').filter(l => l.trim().length > 0);
+            let html = '<div class="strategy-container">';
+            let inList = false;
+
+            lines.forEach(line => {
+                const clean = line.trim();
+                const isHeading = (clean.includes(':') && clean.length < 40 && !clean.startsWith('-') && !clean.startsWith('*')) || 
+                                 clean.toLowerCase().includes('promotion');
+                
+                if (clean.startsWith('-') || clean.startsWith('*') || /^\d+\./.test(clean)) {
+                    if (!inList) {
+                        html += '<ul class="list-container">';
+                        inList = true;
+                    }
+                    const content = clean.replace(/^[-*\d.]+\s*/, '');
+                    const parts = content.split(':');
+                    
+                    html += `<li class="list-item">
+                        <div class="list-content">
+                            ${parts.length > 1 ? `<strong>${parts[0]}</strong>${parseLinks(parts.slice(1).join(':'))}` : parseLinks(content)}
+                        </div>
+                    </li>`;
+                } else {
+                    if (inList) {
+                        html += '</ul>';
+                        inList = false;
+                    }
+                    if (isHeading) {
+                        html += `<div class="strategy-title">${clean.replace(':', '')}</div>`;
+                    } else {
+                        html += `<p class="analysis-text mb-3">${parseLinks(clean)}</p>`;
+                    }
+                }
+            });
+            if (inList) html += '</ul>';
+            html += '</div>';
+            return html;
+        }
+
+        function getBadgeProps(score) {
+            const s = parseInt(score);
+            if (s >= 9) return { text: "Exceptional", color: "#10b981" };
+            if (s >= 7) return { text: "Strong", color: "#6366f1" };
+            if (s >= 5) return { text: "Average", color: "#f59e0b" };
+            return { text: "Not Good", color: "#ef4444" };
+        }
+
+        function truncateText(text, limit) {
+            const words = text.split(' ');
+            if (words.length <= limit) return text;
+            const id = 't-' + Math.random().toString(36).substr(2, 5);
+            return `
+                <span>${words.slice(0, limit).join(' ')}</span><span id="dots-${id}">...</span>
+                <span id="full-${id}" class="hidden">${text}</span>
+                <button class="read-more-btn" onclick="toggleText('${id}')">Read more</button>
+            `;
+        }
+
+        window.toggleText = (id) => {
+            const dots = document.getElementById(`dots-${id}`);
+            const full = document.getElementById(`full-${id}`);
+            const btn = event.target;
+            const isHidden = full.classList.contains('hidden');
+            full.classList.toggle('hidden');
+            dots.classList.toggle('hidden');
+            btn.innerText = isHidden ? "Read less" : "Read more";
+        };
+
+        function showValidationError(id, message) {
+            const el = document.getElementById(id);
+            el.innerText = message;
+            el.style.display = 'block';
+            setTimeout(() => el.style.display = 'none', 4000);
+        }
+    </script>
+</body>
+</html>
