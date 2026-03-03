@@ -13,167 +13,177 @@
     <style>
         :root {
             --primary-gradient: linear-gradient(135deg, #6366f1 0%, #a855f7 50%, #ec4899 100%);
-            --bg-color: #f8fafc;
-            --text-main: #1e293b;
-            --text-muted: #64748b;
+            --bg-color: #fcfcfd;
+            --text-main: #111827;
+            --text-muted: #6b7280;
             --white: #ffffff;
-            --black: #0f172a;
-            --border-color: #e2e8f0;
-            --accent: #6366f1;
+            --black: #000000;
+            --border-color: #f3f4f6;
             --error-bg: #fee2e2;
             --error-text: #b91c1c;
-            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --error-border: #f87171;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.1);
         }
 
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
             background-color: var(--bg-color);
             color: var(--text-main);
-            line-height: 1.6;
+            overflow-x: hidden;
             -webkit-font-smoothing: antialiased;
         }
 
-        .global-container { width: calc(100% - 24px); margin: 0 12px; }
-        @media (min-width: 768px) { .global-container { width: 90%; max-width: 700px; margin: 0 auto; } }
+        .global-container { width: calc(100% - 14px); margin: 0 7px; }
+        @media (min-width: 768px) { .global-container { width: 90%; max-width: 800px; margin: 0 auto; } }
 
-        header.global-container { padding-top: 4rem; padding-bottom: 1.5rem; }
-        
+        header.global-container { padding-top: 3rem; padding-bottom: 1rem; }
+        main.global-container { padding-bottom: 80px; }
+
         .title-gradient {
             background: var(--primary-gradient);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             font-weight: 800;
-            letter-spacing: -0.05em;
-            font-size: 3rem;
+            letter-spacing: -0.04em;
         }
 
         .nav-tabs-custom {
-            display: flex; justify-content: center; gap: 2rem;
-            margin: 1.5rem 0;
+            display: flex; justify-content: center; gap: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            margin: 2rem 0;
         }
         .tab-btn {
-            background: none; border: none; padding: 0.5rem 0;
-            font-size: 0.85rem; font-weight: 800;
-            color: var(--text-muted); border-bottom: 2px solid transparent; cursor: pointer;
-            transition: all 0.2s; letter-spacing: 0.05em;
+            background: none; border: none; padding-bottom: 0.75rem;
+            font-size: 0.85rem; font-weight: 700; text-transform: uppercase;
+            color: var(--text-muted); border-bottom: 3px solid transparent; cursor: pointer;
+            white-space: nowrap;
         }
-        .tab-btn.active { color: var(--black); border-bottom: 2px solid var(--black); }
+        .tab-btn.active { color: var(--black); border-bottom: 3px solid var(--black); }
 
         .custom-textarea {
-            width: 100%; padding: 1.5rem; font-size: 1.1rem; font-weight: 500;
-            border: 1px solid var(--border-color); border-radius: 1.25rem;
-            outline: none; background: var(--white); box-shadow: var(--shadow-lg);
-            transition: border-color 0.2s;
+            width: 100%; padding: 1.5rem; font-size: 1.1rem; font-weight: 600;
+            border: 2px solid var(--border-color); border-radius: 1.5rem;
+            outline: none; background: var(--white); box-shadow: var(--shadow-sm);
         }
 
         .btn-black {
             background: var(--black); color: var(--white); border: none;
-            padding: 1.25rem 2rem; border-radius: 1rem; font-weight: 700;
-            font-size: 1rem; width: 100%; margin-top: 1rem; transition: transform 0.1s;
+            padding: 1rem 2rem; border-radius: 2rem; font-weight: 800;
+            font-size: 0.95rem; width: 100%; transition: all 0.2s;
         }
+        .btn-black:active { transform: scale(0.98); }
 
-        /* Chat UI */
-        .chat-bubble { border-radius: 1.5rem; padding: 1.75rem; margin-bottom: 2rem; animation: slideUp 0.4s ease-out; }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .chat-bubble { border-radius: 1.5rem; padding: 1.25rem; margin-bottom: 1.5rem; line-height: 1.6; position: relative; animation: fadeIn 0.3s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         
-        .bubble-user { background: #e0e7ff; color: #3730a3; font-weight: 600; margin-left: auto; max-width: 90%; box-shadow: var(--shadow-lg); }
-        .bubble-model { background: var(--white); border: 1px solid var(--border-color); width: 100%; box-shadow: var(--shadow-lg); }
+        .bubble-user { background: #eff6ff; align-self: flex-end; font-weight: 600; margin-left: auto; max-width: 85%; color: #1e40af; }
+        .bubble-model { background: var(--white); border: 1px solid var(--border-color); width: 100%; box-shadow: var(--shadow-sm); }
 
-        /* Results Formatting */
-        .verdict-item { margin-bottom: 1.5rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); position: relative; padding-left: 1.25rem; }
-        .verdict-item::before { content: ""; position: absolute; left: 0; top: 0; bottom: 1.5rem; width: 4px; background: var(--black); border-radius: 2px; }
-        .verdict-item:last-of-type { border-bottom: none; margin-bottom: 0.5rem; }
+        .verdict-box { border-left: 4px solid #000; padding-left: 1.25rem; margin-bottom: 1rem; }
+        .score-label { font-weight: 800; font-size: 0.85rem; color: #6366f1; text-transform: uppercase; margin-bottom: 0.2rem; display: block; letter-spacing: 0.05em; }
+        .score-value { font-size: 1.5rem; font-weight: 800; margin-right: 0.5rem; color: var(--black); }
         
-        .score-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem; }
-        .score-label { font-weight: 800; font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.12em; }
-        .score-value-wrap { display: flex; align-items: center; gap: 0.75rem; }
-        .score-value { font-size: 1.5rem; font-weight: 800; color: var(--black); }
-        .quality-badge { padding: 0.2rem 0.6rem; border-radius: 0.5rem; font-size: 0.65rem; font-weight: 800; text-transform: uppercase; border: 1.5px solid currentColor; }
-
-        .analysis-text { font-size: 1.05rem; color: #334155; line-height: 1.8; }
-        .affiliate-link { color: var(--accent); font-weight: 700; text-decoration: underline; }
+        .verdict-badge { background: var(--black); color: white; padding: 0.35rem 1rem; border-radius: 2rem; font-size: 0.85rem; font-weight: 800; display: inline-flex; align-items: center; gap: 0.5rem; margin-top: 1rem; margin-bottom: 0.5rem; }
+        .quality-badge { background: #f3f4f6; color: var(--text-main); padding: 0.2rem 0.6rem; border-radius: 0.5rem; font-size: 0.75rem; font-weight: 700; display: inline-block; margin-left: 0.5rem; border: 1px solid var(--border-color); }
         
-        /* Strategy Formatting */
-        .strategy-container { padding: 0.5rem 0; }
-        .strategy-title { font-weight: 800; font-size: 1.15rem; color: var(--black); margin-top: 1.5rem; margin-bottom: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.05em; }
-        
-        .list-container { margin: 1rem 0; padding-left: 0; list-style: none; }
-        .list-item { margin-bottom: 1.25rem; display: flex; align-items: flex-start; gap: 0.75rem; }
-        .list-item::before { content: "→"; color: var(--accent); font-weight: bold; flex-shrink: 0; margin-top: 0.1rem; }
-        .list-content { flex: 1; }
-        .list-item strong { color: var(--black); display: block; margin-bottom: 0.25rem; font-size: 1.05rem; }
+        .strategy-title { font-weight: 800; font-size: 1.15rem; margin-bottom: 1.25rem; color: var(--black); border-bottom: 2px solid var(--border-color); padding-bottom: 0.5rem; }
+        .strategy-point { margin-bottom: 1.25rem; display: block; }
+        .strategy-point strong { color: var(--black); display: block; margin-bottom: 0.35rem; font-size: 1rem; }
 
         .badge-container-wrapper {
-            margin-top: 1rem; display: flex; flex-wrap: wrap; gap: 0.75rem; padding-top: 1.5rem; border-top: 2px dashed var(--border-color);
+            margin-top: 0.5rem; display: flex; flex-wrap: wrap; gap: 0.6rem; padding-top: 1.25rem; border-top: 1px solid var(--border-color);
         }
         .strategy-badge {
-            background: #f8fafc; color: var(--black); border: 1px solid #cbd5e1;
-            padding: 0.75rem 1.25rem; border-radius: 3rem; font-size: 0.9rem;
+            background: #f8fafc; color: var(--black); border: 1px solid #e2e8f0;
+            padding: 0.7rem 1.25rem; border-radius: 2rem; font-size: 0.85rem;
             font-weight: 700; cursor: pointer; transition: all 0.2s;
-            display: flex; align-items: center; gap: 0.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            display: flex; align-items: center; gap: 0.4rem;
         }
         .strategy-badge:hover { background: var(--black); color: var(--white); border-color: var(--black); transform: translateY(-2px); }
 
-        .read-more-btn { color: var(--accent); background: none; border: none; font-weight: 700; font-size: 0.85rem; padding: 0; cursor: pointer; text-decoration: underline; margin-left: 4px; }
-        
-        .shimmer { background: #edf2f7; height: 120px; border-radius: 1.5rem; animation: pulse 1.5s infinite; }
-        @keyframes pulse { 0%, 100% { opacity: 0.6; } 50% { opacity: 1; } }
+        .inline-input-group {
+            display: flex; background: var(--white); border: 2px solid var(--border-color);
+            border-radius: 2rem; padding: 0.3rem; margin-top: 1rem; box-shadow: var(--shadow-sm);
+        }
+        .inline-input-group input { flex: 1; border: none; outline: none; padding: 0.6rem 1rem; font-weight: 600; border-radius: 2rem; }
+        .inline-send-btn { background: var(--black); color: white; border: none; width: 2.5rem; height: 2.5rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
 
-        .alert-box { background: var(--error-bg); color: var(--error-text); padding: 1rem; border-radius: 0.75rem; font-weight: 700; margin-bottom: 1.5rem; display: none; text-align: center; border: 1px solid var(--error-text); }
+        .read-more-btn { color: #6366f1; background: none; border: none; font-weight: 700; font-size: 0.8rem; padding: 0; cursor: pointer; margin-left: 5px; text-decoration: underline; }
+        .dots { color: var(--text-muted); }
+
+        .alert-box {
+            background: var(--error-bg); color: var(--error-text); border: 1px solid var(--error-border);
+            padding: 0.75rem 1rem; border-radius: 1rem; font-size: 0.85rem; font-weight: 700;
+            margin-bottom: 1.25rem; text-align: center; display: none; animation: shake 0.4s ease-in-out;
+        }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+
         .hidden { display: none !important; }
+        .shimmer { background: #f3f4f6; height: 100px; border-radius: 1.5rem; margin-bottom: 1.5rem; animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0% { opacity: 0.5; } 50% { opacity: 1; } 100% { opacity: 0.5; } }
     </style>
 </head>
 <body>
 
     <header class="global-container text-center">
-        <h1 class="title-gradient">IdeaCheck</h1>
+        <h1 class="display-5 title-gradient">IdeaCheck</h1>
+        <p class="text-muted fw-bold small text-uppercase">AI Business Architect</p>
+
         <nav class="nav-tabs-custom">
-            <button id="nav-validate" class="tab-btn active" onclick="switchMode('validate')">HOW IS MY IDEA</button>
-            <button id="nav-discover" class="tab-btn" onclick="switchMode('discover')">FIND BUSINESS IDEA</button>
+            <button id="nav-validate" class="tab-btn active" onclick="switchMode('validate')">How is my business idea</button>
+            <button id="nav-discover" class="tab-btn" onclick="switchMode('discover')">Find Business Idea</button>
         </nav>
     </header>
 
     <main class="global-container">
         <div id="ui-input-area">
             <div id="mode-validate">
-                <div id="error-alert-main" class="alert-box">Describe your business idea first.</div>
-                <textarea id="ideaInput" rows="5" class="custom-textarea" placeholder="Describe your business or product idea here..."></textarea>
-                <button class="btn-black" onclick="startValidation()">ANALYZE IDEA</button>
+                <div class="text-center mb-4">
+                    <h2 class="fw-800 h4">Is your business idea worth it?</h2>
+                    <p class="text-muted small">Analyze any project (SaaS, Etsy, PDFs) for market fit.</p>
+                </div>
+                <div id="error-alert-main" class="alert-box">Write Business or Product or Service Idea</div>
+                <textarea id="ideaInput" rows="4" class="custom-textarea mb-3" placeholder="I want to solve [Problem] by [Solution]. My unique factor is [USP]..."></textarea>
+                <button class="btn-black" onclick="startValidation()">Analyze Idea</button>
             </div>
             
-            <div id="mode-discover" class="hidden text-center">
-                <p class="text-muted mb-4">Pick a category to find high-potential gaps.</p>
-                <div class="d-flex flex-wrap justify-content-center gap-2">
-                    <button class="strategy-badge" onclick="tapNiche('AI SaaS')">AI SaaS</button>
-                    <button class="strategy-badge" onclick="tapNiche('Food/Beverage')">Food & Bev</button>
-                    <button class="strategy-badge" onclick="tapNiche('E-commerce')">E-commerce</button>
-                    <button class="strategy-badge" onclick="tapNiche('Local Services')">Local Services</button>
+            <div id="mode-discover" class="hidden">
+                <div class="text-center mb-4">
+                    <h2 class="fw-800 h4">Find high-potential opportunities</h2>
+                    <p class="text-muted small">Select a category to find what people actually want.</p>
+                </div>
+                <div class="d-flex flex-wrap justify-content-center gap-2 mb-3 mt-4">
+                    <button class="strategy-badge" onclick="tapNiche('SaaS')">SaaS</button>
+                    <button class="strategy-badge" onclick="tapNiche('Etsy')">Etsy</button>
+                    <button class="strategy-badge" onclick="tapNiche('Digital Goods')">PDFs</button>
+                    <button class="strategy-badge" onclick="tapNiche('Fitness')">Fitness</button>
+                    <button class="strategy-badge" onclick="tapNiche('Education')">Education</button>
+                    <button class="strategy-badge" onclick="tapNiche('Food')">Food</button>
+                    <button class="strategy-badge" onclick="tapNiche('Gaming')">Gaming</button>
                 </div>
             </div>
         </div>
 
         <div id="chat-phase" class="hidden">
+            <div id="error-alert-chat" class="alert-box">Write Business or Product or Service Idea</div>
             <div id="messages-container"></div>
-            <div id="loading-area" class="hidden"><div class="shimmer"></div></div>
-            <div class="text-center mt-5 mb-5">
-                <button class="btn btn-sm text-muted fw-bold" onclick="location.reload()">START NEW ANALYSIS</button>
+            <div id="loading-area" class="hidden">
+                <div class="shimmer"></div>
+            </div>
+            <div id="session-reset-container" class="text-center mt-4 mb-5">
+                <button class="btn btn-link text-muted small text-decoration-none fw-bold" onclick="location.reload()">REFRESH SESSION</button>
             </div>
         </div>
     </main>
 
     <script type="module">
         const WORKER_URL = "https://little-queen-f49a.vineetkum25.workers.dev";
-        
         let chatContext = [];
-        let finalDecisionScore = 0;
-        let businessTypeStr = "this business";
-        let usedBadges = new Set(); 
 
-        // List of affiliate products
-        const affiliateProducts = [
-            { name: "Fridge", desc: "Best fridge for commercial purpose like on icecream truck or small shop.", url: "https://amazon.com" }
-
-            ,{ name: "Amazon Ring Light", desc: "Professional lighting set for product photography and promotional videos.", url: "https://amazon.com" }
+        const questions = [
+            { id: 'build', label: 'How to build this product or solution?', icon: '🛠️' },
+            { id: 'market', label: 'How to do marketing of this product?', icon: '📈' },
+            { id: 'launch', label: 'How to launch this product to first users?', icon: '🚀' }
         ];
 
         window.switchMode = (mode) => {
@@ -184,80 +194,76 @@
         };
 
         window.tapNiche = (niche) => {
-            businessTypeStr = niche;
-            handleQuery(`Find 3 trending gaps in ${niche}`, getSystemPrompt());
+            handleQuery(`Explore gaps in ${niche}.`, `Find 3 gaps in ${niche}. No meta-talk.`);
         };
-
-        function isBusinessContext(text) {
-            const lowerText = text.toLowerCase();
-            const businessKeywords = [
-                'app', 'service', 'sell', 'product', 'business', 'store', 'website', 'platform', 
-                'customer', 'market', 'solution', 'revenue', 'startup', 'company', 'agency', 
-                'shop', 'client', 'software', 'hardware', 'tool', 'restaurant', 'cafe', 
-                'delivery', 'subscription', 'brand', 'manufacture', 'e-commerce', 'consulting'
-            ];
-            const conversationalJunk = ['hi', 'hello', 'how are you', 'tell me a joke', 'who are you', 'hey', 'yo'];
-            if (conversationalJunk.includes(lowerText)) return false;
-            const words = lowerText.split(/\s+/).filter(w => w.length > 0);
-            if (words.length < 3) return false;
-            return businessKeywords.some(keyword => lowerText.includes(keyword));
-        }
 
         window.startValidation = () => {
             const val = document.getElementById('ideaInput').value.trim();
-            if (!val || val.length < 5) {
-                showValidationError('error-alert-main', 'Describe your business idea first.');
+            if (isInvalidInput(val)) {
+                showValidationError('error-alert-main');
                 return;
             }
-            if (!isBusinessContext(val)) {
-                showValidationError('error-alert-main', 'Please write a business, product, or service idea only.');
-                return;
-            }
-            usedBadges.clear();
-            finalDecisionScore = 0; 
-            const words = val.split(' ');
-            businessTypeStr = words.slice(0, 3).join(' ') + (words.length > 3 ? '...' : '');
-            handleQuery(val, getSystemPrompt());
+            if (val) handleQuery(val, getSystemPrompt());
         };
 
-        window.triggerAction = (type) => {
-            usedBadges.add(type);
-            const prompt = type === 'improve' ? 
-                `[INTERNAL_REQUEST] Give me 3 slight improvement tips (easy addons or simple features) for my business idea. No complex overhauls. NO promotion or marketing tips here.` : 
-                `[INTERNAL_REQUEST] Provide easy promotion tips for ${businessTypeStr}. You MUST split this into TWO sections with these exact titles: 'Free Promotion:' and 'Paid Promotion:' (including a simple budget).`;
-            handleQuery(prompt, getSystemPrompt());
+        window.triggerDeepDive = (id) => {
+            const q = questions.find(item => item.id === id);
+            handleQuery(`[INTERNAL_REQUEST] ${q.label}`, getSystemPrompt());
         };
+
+        window.toggleReadMore = (btn) => {
+            const parent = btn.parentElement;
+            const fullText = parent.querySelector('.full-text');
+            const truncated = parent.querySelector('.truncated-text');
+            const dots = parent.querySelector('.dots');
+            
+            if (fullText.classList.contains('hidden')) {
+                fullText.classList.remove('hidden');
+                truncated.classList.add('hidden');
+                dots.classList.add('hidden');
+                btn.innerText = 'Read less';
+            } else {
+                fullText.classList.add('hidden');
+                truncated.classList.remove('hidden');
+                dots.classList.remove('hidden');
+                btn.innerText = 'Read more';
+            }
+        };
+
+        function isInvalidInput(text) {
+            if (!text) return true;
+            const urlPattern = /^(http|https|www\.)/i;
+            const linkPattern = /[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}\/[^\s]*/;
+            return urlPattern.test(text) || linkPattern.test(text);
+        }
+
+        function showValidationError(targetId) {
+            const alert = document.getElementById(targetId);
+            alert.style.display = 'block';
+            setTimeout(() => { alert.style.display = 'none'; }, 3000);
+        }
 
         function getSystemPrompt() {
-            const affiliateContext = affiliateProducts.map(p => `- ${p.name}: ${p.desc} (URL: ${p.url})`).join('\n');
-            return `You are a professional Startup Analyst.
-STRICT FORMATTING RULES:
-1. NEVER use bolding (**). NEVER use hashtags (#).
-2. For initial analysis, use this EXACT structure:
-   [Problem] Score: X/10. Analysis text...
-   [Idea] Score: X/10. Analysis text...
-   [Should you start this] Score: X/10. Analysis text...
-   [FINAL_SCORE: X]
-3. When providing tips or promotion:
-   - For Improvements: Provide only features/addons. NO marketing talk.
-   - For Promotion: Provide ONLY 'Free Promotion:' and 'Paid Promotion:' sections.
-   - Use bullet points starting with '-' or '*' for each tip.
-   - Keep the title and description on the same line if possible, separated by a colon.
-4. AFFILIATE LINKS: You have access to these recommended products:
-${affiliateContext}
-   - Only include a link if it fits perfectly as a tool recommendation in the Improve or Promote responses.
-   - Format link as: [Product Name](URL). Do NOT force them.
-5. KEEP TIPS SIMPLE and easy to implement.
-6. NEVER invent names. Use the user's description.`;
+            return `STRICT OUTPUT RULES:
+- NO meta-headers, NO process-text, NO intros.
+- NO markdown characters like ** in your output.
+- If input lacks Problem/Solution/USP: Ask ONE question. NO scoring.
+- Initial Scoreboard:
+  1. "[Problem] Score: X/10" followed by a detailed analysis paragraph.
+  2. "[Idea & USP] Score: X/10" followed by a detailed analysis paragraph.
+  3. "Should you start this: X%" followed by a paragraph explaining if user should invest time & money.
+  4. End with "[BUTTONS: ALL]"
+
+- Deep-Dive: Start with requested title. Bullet points only. Title + explanation.`;
         }
 
         async function handleQuery(text, sys) {
             document.getElementById('ui-input-area').classList.add('hidden');
             document.getElementById('chat-phase').classList.remove('hidden');
-            document.querySelectorAll('.badge-container-wrapper').forEach(b => b.remove());
+            const existingInputs = document.querySelectorAll('.inline-input-group');
+            existingInputs.forEach(el => el.remove());
 
             if (!text.includes("[INTERNAL_REQUEST]")) appendMessage(text, true);
-            
             const loader = document.getElementById('loading-area');
             loader.classList.remove('hidden');
             chatContext.push({ role: "user", parts: [{ text }] });
@@ -275,17 +281,19 @@ ${affiliateContext}
                 const aiText = data.candidates[0].content.parts[0].text;
                 loader.classList.add('hidden');
                 
-                const filtered = aiText.replace(/\*\*/g, '').replace(/#/g, '').trim();
+                const filtered = aiText
+                    .replace(/\[?(Paragraph analysis|VALIDATION GATE|SCOREBOARD|DEEP-DIVE|STRATEGY RESPONSES|STEP \d|Business Analysis|Target Audience|Pain Points|Unique Value Proposition)\]?:?/gi, '')
+                    .replace(/Does your message clearly explain.*?\?/gi, '')
+                    .replace(/\[INTERNAL_REQUEST\].*?\n/gi, '')
+                    .replace(/\*\*/g, '')
+                    .trim();
+
                 appendMessage(filtered, false);
                 chatContext.push({ role: "model", parts: [{ text: filtered }] });
             } catch (err) {
                 loader.classList.add('hidden');
-                appendMessage("An error occurred. Please try again.", false);
+                appendMessage("Connection error.", false);
             }
-        }
-
-        function parseLinks(text) {
-            return text.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" class="affiliate-link">$1</a>');
         }
 
         function appendMessage(text, isUser) {
@@ -294,29 +302,18 @@ ${affiliateContext}
             bubble.className = `chat-bubble ${isUser ? 'bubble-user' : 'bubble-model'}`;
 
             if (!isUser) {
-                const scoreTagMatch = text.match(/\[FINAL_SCORE:\s*(\d+)\]/i);
-                const explicitScoreMatch = text.match(/Should you start this\]?.*?Score:?\s*(\d+)/is);
-                
-                if (scoreTagMatch) {
-                    finalDecisionScore = parseInt(scoreTagMatch[1]);
-                    text = text.replace(/\[FINAL_SCORE:\s*\d+\]/gi, '');
-                } else if (explicitScoreMatch) {
-                    finalDecisionScore = parseInt(explicitScoreMatch[1]);
-                }
+                const hasScore = text.includes("Score:");
+                const hasVerdict = text.includes("Should you start this:");
 
-                const hasScores = /Problem|Idea|Should you start/i.test(text) && /Score:?\s*\d+/i.test(text);
-                bubble.innerHTML = hasScores ? formatValidation(text) : formatStrategy(text);
-
-                if (finalDecisionScore >= 5) {
-                    const badgeContainer = document.createElement('div');
-                    badgeContainer.className = 'badge-container-wrapper';
-                    let html = "";
-                    if (!usedBadges.has('improve')) html += `<button class="strategy-badge" onclick="triggerAction('improve')">✨ Improve My Idea</button>`;
-                    if (!usedBadges.has('promote')) html += `<button class="strategy-badge" onclick="triggerAction('promote')">📈 How to Promote</button>`;
-                    if(html) {
-                        badgeContainer.innerHTML = html;
-                        bubble.appendChild(badgeContainer);
-                    }
+                if (hasScore || hasVerdict) {
+                    bubble.innerHTML = `
+                        <div class="verdict-box">${formatResponse(text)}</div>
+                        <div class="badge-container-wrapper">${renderQuestionButtons()}</div>
+                    `;
+                } else if (text.endsWith('?') || text.includes('clarify')) {
+                    bubble.innerHTML = `${text}<div class="inline-input-group"><input type="text" placeholder="Your answer..." onkeypress="if(event.key==='Enter') window.submitInline(this)"><button class="inline-send-btn" onclick="window.submitInline(this.previousElementSibling)"><svg width="14" height="14" fill="white" viewBox="0 0 16 16"><path d="M15.854.146a.5.5 0 0 1 .11.54l-5.819 14.547a.75.75 0 0 1-1.329.124l-3.178-4.995L.643 7.184a.75.75 0 0 1 .124-1.33L15.314.037a.5.5 0 0 1 .54.11ZM6.636 10.07l2.761 4.338L14.13 2.576 6.636 10.07Z"/></svg></button></div>`;
+                } else {
+                    bubble.innerHTML = formatStrategy(text);
                 }
             } else {
                 bubble.innerText = text;
@@ -326,112 +323,89 @@ ${affiliateContext}
             window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
         }
 
-        function formatValidation(raw) {
-            const sectionRegex = /\[?\s*(Problem|Idea|Should you start this)\s*\]?.*?Score:?\s*(\d+)\/10/gi;
-            let segments = [];
-            let matches = [...raw.matchAll(sectionRegex)];
-            if (matches.length === 0) return formatStrategy(raw);
-
-            matches.forEach((match, i) => {
-                const nextMatch = matches[i + 1];
-                const start = match.index + match[0].length;
-                const end = nextMatch ? nextMatch.index : raw.length;
-                let segmentText = raw.substring(start, end).trim();
-                segmentText = segmentText.replace(/^[.:\s\-]+/, '');
-                segments.push({ label: match[1], score: match[2], text: segmentText });
-            });
-
-            return segments.map(seg => {
-                const badge = getBadgeProps(seg.score);
-                return `
-                    <div class="verdict-item">
-                        <div class="score-header">
-                            <span class="score-label">${seg.label}</span>
-                            <div class="score-value-wrap">
-                                <span class="score-value">${seg.score}/10</span>
-                                <span class="quality-badge" style="color:${badge.color}; border-color:${badge.color}">${badge.text}</span>
-                            </div>
-                        </div>
-                        <div class="analysis-text">${parseLinks(truncateText(seg.text, 30))}</div>
-                    </div>
-                `;
-            }).join('');
+        function renderQuestionButtons() {
+            return questions.map(q => `<button class="strategy-badge" onclick="triggerDeepDive('${q.id}')">${q.icon} ${q.label}</button>`).join('');
         }
 
-        function formatStrategy(text) {
-            const lines = text.split('\n').filter(l => l.trim().length > 0);
-            let html = '<div class="strategy-container">';
-            let inList = false;
+        window.submitInline = (inputEl) => {
+            const val = inputEl.value.trim();
+            if (isInvalidInput(val)) {
+                showValidationError('error-alert-chat');
+                return;
+            }
+            if (val) handleQuery(val, getSystemPrompt());
+        };
 
-            lines.forEach(line => {
-                const clean = line.trim();
-                const isHeading = (clean.includes(':') && clean.length < 40 && !clean.startsWith('-') && !clean.startsWith('*')) || 
-                                 clean.toLowerCase().includes('promotion');
-                
-                if (clean.startsWith('-') || clean.startsWith('*') || /^\d+\./.test(clean)) {
-                    if (!inList) {
-                        html += '<ul class="list-container">';
-                        inList = true;
-                    }
-                    const content = clean.replace(/^[-*\d.]+\s*/, '');
-                    const parts = content.split(':');
-                    
-                    html += `<li class="list-item">
-                        <div class="list-content">
-                            ${parts.length > 1 ? `<strong>${parts[0]}</strong>${parseLinks(parts.slice(1).join(':'))}` : parseLinks(content)}
-                        </div>
-                    </li>`;
-                } else {
-                    if (inList) {
-                        html += '</ul>';
-                        inList = false;
-                    }
-                    if (isHeading) {
-                        html += `<div class="strategy-title">${clean.replace(':', '')}</div>`;
-                    } else {
-                        html += `<p class="analysis-text mb-3">${parseLinks(clean)}</p>`;
-                    }
-                }
-            });
-            if (inList) html += '</ul>';
-            html += '</div>';
-            return html;
+        function getQualityTag(scoreStr) {
+            const score = parseInt(scoreStr);
+            if (score >= 95) return "wow amazing";
+            if (score >= 90) return "excellent";
+            if (score >= 85) return "creative & very unique";
+            if (score >= 75) return "very good";
+            if (score >= 60) return "good";
+            return "not good";
         }
 
-        function getBadgeProps(score) {
-            const s = parseInt(score);
-            if (s >= 9) return { text: "Exceptional", color: "#10b981" };
-            if (s >= 7) return { text: "Strong", color: "#6366f1" };
-            if (s >= 5) return { text: "Average", color: "#f59e0b" };
-            return { text: "Not Good", color: "#ef4444" };
-        }
-
-        function truncateText(text, limit) {
-            const words = text.split(' ');
+        function truncateByWord(text, limit) {
+            const words = text.split(/\s+/);
             if (words.length <= limit) return text;
-            const id = 't-' + Math.random().toString(36).substr(2, 5);
+            const truncated = words.slice(0, limit).join(' ');
             return `
-                <span>${words.slice(0, limit).join(' ')}</span><span id="dots-${id}">...</span>
-                <span id="full-${id}" class="hidden">${text}</span>
-                <button class="read-more-btn" onclick="toggleText('${id}')">Read more</button>
+                <span class="truncated-text">${truncated}</span><span class="dots">...</span>
+                <span class="full-text hidden">${text}</span>
+                <button class="read-more-btn" onclick="toggleReadMore(this)">Read more</button>
             `;
         }
 
-        window.toggleText = (id) => {
-            const dots = document.getElementById(`dots-${id}`);
-            const full = document.getElementById(`full-${id}`);
-            const btn = event.target;
-            const isHidden = full.classList.contains('hidden');
-            full.classList.toggle('hidden');
-            dots.classList.toggle('hidden');
-            btn.innerText = isHidden ? "Read less" : "Read more";
-        };
+        function formatResponse(raw) {
+            let processed = raw.replace(/\[BUTTONS:.*?\]/gi, '');
+            
+            // Regex to split into sections and handle truncation
+            // Pattern 1: [Problem] Score: X/10 {paragraph}
+            processed = processed.replace(/\[Problem\] Score:\s?(\d+)\/10\s*([\s\S]*?)(?=\[Idea|$)/i, (match, score, para) => {
+                const tag = getQualityTag(score * 10);
+                const truncatedPara = truncateByWord(para.trim(), 25);
+                return `<span class="score-label">The Problem</span><span class="score-value">${score}/10</span><span class="quality-badge">${tag}</span><p class="mt-2 mb-3">${truncatedPara}</p>`;
+            });
 
-        function showValidationError(id, message) {
-            const el = document.getElementById(id);
-            el.innerText = message;
-            el.style.display = 'block';
-            setTimeout(() => el.style.display = 'none', 4000);
+            // Pattern 2: [Idea & USP] Score: X/10 {paragraph}
+            processed = processed.replace(/\[Idea & USP\] Score:\s?(\d+)\/10\s*([\s\S]*?)(?=\[Should|Should|$)/i, (match, score, para) => {
+                const tag = getQualityTag(score * 10);
+                const truncatedPara = truncateByWord(para.trim(), 25);
+                return `<span class="score-label">Concept & USP</span><span class="score-value">${score}/10</span><span class="quality-badge">${tag}</span><p class="mt-2 mb-3">${truncatedPara}</p>`;
+            });
+
+            // Pattern 3: Should you start this: X% {paragraph}
+            processed = processed.replace(/Should you start this:\s?([\d%]+)\s*([\s\S]*)/i, (match, pct, para) => {
+                const num = parseInt(pct);
+                const tag = getQualityTag(num);
+                const truncatedPara = truncateByWord(para.trim(), 25);
+                return `<span class="verdict-badge">Should you start this: ${pct} <span class="quality-badge" style="background:#fff; color:#000;">${tag}</span></span><p class="mt-2">${truncatedPara}</p>`;
+            });
+
+            return processed;
+        }
+
+        function formatStrategy(text) {
+            const lines = text.split('\n');
+            const isHowTo = lines[0].toLowerCase().includes("how to");
+            let html = isHowTo ? `<div class="strategy-title">${lines[0]}</div>` : '';
+            const contentLines = isHowTo ? lines.slice(1) : lines;
+
+            contentLines.forEach(line => {
+                if (line.trim().startsWith('*') || line.trim().match(/^\d\./) || line.trim().startsWith('-')) {
+                    const clean = line.replace(/^[\*\d\.\-\s]+/, '').trim();
+                    const parts = clean.split(':');
+                    if(parts.length > 1) {
+                        html += `<div class="strategy-point"><strong>${parts[0]}</strong> <p>${parts.slice(1).join(':')}</p></div>`;
+                    } else {
+                        html += `<div class="strategy-point">${clean}</div>`;
+                    }
+                } else if(line.trim().length > 0) {
+                    html += `<p class="mb-3">${line}</p>`;
+                }
+            });
+            return html;
         }
     </script>
 </body>
