@@ -1,15 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>IdeaCheck — AI Business Validation</title>
-    
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
     <style>
         :root {
             --primary-gradient: linear-gradient(135deg, #6366f1 0%, #a855f7 50%, #ec4899 100%);
@@ -19,10 +17,15 @@
             --white: #ffffff;
             --black: #000000;
             --border-color: #f3f4f6;
-            --error-bg: #fee2e2;
-            --error-text: #b91c1c;
-            --error-border: #f87171;
             --shadow-sm: 0 1px 3px rgba(0,0,0,0.1);
+            --btn-blue-grey: #f1f5f9;
+            --success-green: #059669;
+            --link-color: #6366f1;
+            --error-red: #ef4444;
+            --chat-user-bg: #eff6ff;
+            --chat-error-bg: #fef2f2;
+            --chat-error-border: #fecaca;
+            --chat-error-text: #991b1b;
         }
 
         body {
@@ -36,376 +39,496 @@
         .global-container { width: calc(100% - 14px); margin: 0 7px; }
         @media (min-width: 768px) { .global-container { width: 90%; max-width: 800px; margin: 0 auto; } }
 
-        header.global-container { padding-top: 3rem; padding-bottom: 1rem; }
-        main.global-container { padding-bottom: 80px; }
-
-        .title-gradient {
+        #rotating-word {
+            display: inline-block;
+            transition: opacity 0.4s ease;
+            font-weight: 800;
             background: var(--primary-gradient);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            font-weight: 800;
-            letter-spacing: -0.04em;
         }
+        .fade-hidden { opacity: 0; }
 
-        .nav-tabs-custom {
-            display: flex; justify-content: center; gap: 1.5rem;
-            border-bottom: 1px solid var(--border-color);
-            margin: 2rem 0;
-        }
-        .tab-btn {
-            background: none; border: none; padding-bottom: 0.75rem;
-            font-size: 0.85rem; font-weight: 700; text-transform: uppercase;
-            color: var(--text-muted); border-bottom: 3px solid transparent; cursor: pointer;
-            white-space: nowrap;
-        }
-        .tab-btn.active { color: var(--black); border-bottom: 3px solid var(--black); }
+        .main-header { padding-top: 4rem; padding-bottom: 2rem; }
+        .subtext { font-size: 0.95rem; color: var(--text-muted); font-weight: 500; margin-top: 0.5rem; }
 
         .custom-textarea {
             width: 100%; padding: 1.5rem; font-size: 1.1rem; font-weight: 600;
             border: 2px solid var(--border-color); border-radius: 1.5rem;
             outline: none; background: var(--white); box-shadow: var(--shadow-sm);
+            transition: border-color 0.2s;
         }
+        .custom-textarea:focus { border-color: #6366f1; }
 
         .btn-black {
             background: var(--black); color: var(--white); border: none;
-            padding: 1rem 2rem; border-radius: 2rem; font-weight: 800;
-            font-size: 0.95rem; width: 100%; transition: all 0.2s;
+            padding: 0.8rem 1.5rem; border-radius: 2rem; font-weight: 800;
+            font-size: 0.95rem; width: fit-content; min-width: 140px; 
+            margin: 0 auto; display: block; transition: transform 0.2s;
         }
-        .btn-black:active { transform: scale(0.98); }
+        .btn-black:active { transform: scale(0.95); }
+        .btn-black:disabled { opacity: 0.6; cursor: not-allowed; }
 
-        .chat-bubble { border-radius: 1.5rem; padding: 1.25rem; margin-bottom: 1.5rem; line-height: 1.6; position: relative; animation: fadeIn 0.3s ease-out; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        
-        .bubble-user { background: #eff6ff; align-self: flex-end; font-weight: 600; margin-left: auto; max-width: 85%; color: #1e40af; }
-        .bubble-model { background: var(--white); border: 1px solid var(--border-color); width: 100%; box-shadow: var(--shadow-sm); }
+        .section-card { 
+            background: var(--white); 
+            border: 1px solid var(--border-color); 
+            border-radius: 1.5rem; 
+            padding: 2rem; 
+            margin-bottom: 1.5rem; 
+            box-shadow: var(--shadow-sm);
+            animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
 
-        .verdict-box { border-left: 4px solid #000; padding-left: 1.25rem; margin-bottom: 1rem; }
+        .verdict-box { border-left: 4px solid var(--black); padding-left: 1.25rem; }
         .score-label { font-weight: 800; font-size: 0.85rem; color: #6366f1; text-transform: uppercase; margin-bottom: 0.2rem; display: block; letter-spacing: 0.05em; }
-        .score-value { font-size: 1.5rem; font-weight: 800; margin-right: 0.5rem; color: var(--black); }
-        
-        .verdict-badge { background: var(--black); color: white; padding: 0.35rem 1rem; border-radius: 2rem; font-size: 0.85rem; font-weight: 800; display: inline-flex; align-items: center; gap: 0.5rem; margin-top: 1rem; margin-bottom: 0.5rem; }
-        .quality-badge { background: #f3f4f6; color: var(--text-main); padding: 0.2rem 0.6rem; border-radius: 0.5rem; font-size: 0.75rem; font-weight: 700; display: inline-block; margin-left: 0.5rem; border: 1px solid var(--border-color); }
-        
-        .strategy-title { font-weight: 800; font-size: 1.15rem; margin-bottom: 1.25rem; color: var(--black); border-bottom: 2px solid var(--border-color); padding-bottom: 0.5rem; }
-        .strategy-point { margin-bottom: 1.25rem; display: block; }
-        .strategy-point strong { color: var(--black); display: block; margin-bottom: 0.35rem; font-size: 1rem; }
+        .score-value { font-size: 1.5rem; font-weight: 800; margin-right: 0.5rem; color: var(--black); vertical-align: middle; }
+        .quality-badge { background: #f3f4f6; color: var(--text-main); padding: 0.2rem 0.6rem; border-radius: 0.5rem; font-size: 0.75rem; font-weight: 700; display: inline-block; margin-left: 0.5rem; border: 1px solid var(--border-color); vertical-align: middle; text-transform: uppercase; }
+
+        .verdict-badge { 
+            background: #f3f4f6; 
+            color: var(--text-main); 
+            padding: 0.4rem 1.2rem; 
+            border-radius: 2rem; 
+            font-size: 0.85rem; 
+            font-weight: 800; 
+            display: inline-flex; 
+            align-items: center; 
+            gap: 0.5rem; 
+            margin-top: 1rem; 
+            border: 1px solid var(--border-color);
+        }
+
+        .improve-btn {
+            position: relative;
+            background: var(--btn-blue-grey);
+            color: var(--black);
+            border: 3px solid #e2e8f0;
+            padding: 1.25rem 3rem;
+            border-radius: 4rem;
+            font-size: 1.3rem;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            z-index: 1;
+            overflow: visible;
+        }
+
+        .improve-btn:disabled {
+            cursor: not-allowed;
+            opacity: 0.7;
+            transform: none !important;
+        }
+
+        .improve-btn::after {
+            content: '';
+            position: absolute;
+            inset: -4px;
+            background: conic-gradient(from 0deg, transparent 0%, transparent 70%, #6366f1 85%, #ec4899 100%);
+            border-radius: 4rem;
+            z-index: -1;
+            opacity: 0;
+            padding: 4px;
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask-composite: exclude;
+            -webkit-mask-composite: destination-out;
+        }
+
+        .animate-border::after { opacity: 1; animation: snake-border 3s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+
+        @keyframes snake-border {
+            0% { transform: rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: rotate(1080deg); opacity: 0; }
+        }
+
+        .improve-btn:hover:not(:disabled) {
+            transform: translateY(-4px);
+            background: #fff;
+            box-shadow: 0 20px 40px -10px rgba(99, 102, 241, 0.15);
+            border-color: #cbd5e1;
+        }
 
         .badge-container-wrapper {
-            margin-top: 0.5rem; display: flex; flex-wrap: wrap; gap: 0.6rem; padding-top: 1.25rem; border-top: 1px solid var(--border-color);
+            margin-top: 1.5rem;
+            display: flex;
+            justify-content: center;
+            padding-top: 1.25rem;
+            width: 100%;
         }
-        .strategy-badge {
-            background: #f8fafc; color: var(--black); border: 1px solid #e2e8f0;
-            padding: 0.7rem 1.25rem; border-radius: 2rem; font-size: 0.85rem;
-            font-weight: 700; cursor: pointer; transition: all 0.2s;
-            display: flex; align-items: center; gap: 0.4rem;
-        }
-        .strategy-badge:hover { background: var(--black); color: var(--white); border-color: var(--black); transform: translateY(-2px); }
 
-        .inline-input-group {
-            display: flex; background: var(--white); border: 2px solid var(--border-color);
-            border-radius: 2rem; padding: 0.3rem; margin-top: 1rem; box-shadow: var(--shadow-sm);
+        .chat-bubble { border-radius: 1.5rem; padding: 1.25rem; margin-bottom: 1.5rem; line-height: 1.6; position: relative; }
+        .bubble-user { 
+            background: var(--chat-user-bg); 
+            align-self: flex-end; 
+            font-weight: 600; 
+            margin-left: auto; 
+            max-width: 85%; 
+            color: #1e40af; 
+            border: 1px solid #dbeafe;
         }
-        .inline-input-group input { flex: 1; border: none; outline: none; padding: 0.6rem 1rem; font-weight: 600; border-radius: 2rem; }
-        .inline-send-btn { background: var(--black); color: white; border: none; width: 2.5rem; height: 2.5rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
 
-        .read-more-btn { color: #6366f1; background: none; border: none; font-weight: 700; font-size: 0.8rem; padding: 0; cursor: pointer; margin-left: 5px; text-decoration: underline; }
-        .dots { color: var(--text-muted); }
-
-        .alert-box {
-            background: var(--error-bg); color: var(--error-text); border: 1px solid var(--error-border);
-            padding: 0.75rem 1rem; border-radius: 1rem; font-size: 0.85rem; font-weight: 700;
-            margin-bottom: 1.25rem; text-align: center; display: none; animation: shake 0.4s ease-in-out;
+        .bubble-error {
+            background: var(--chat-error-bg);
+            border: 1px solid var(--chat-error-border);
+            color: var(--chat-error-text);
+            align-self: flex-start;
+            font-weight: 600;
+            max-width: 85%;
         }
-        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+
+        .affiliate-link { 
+            color: var(--link-color); 
+            text-decoration: underline; 
+            font-weight: 700; 
+        }
+        
+        .affiliate-link:hover {
+            color: #4f46e5;
+        }
 
         .hidden { display: none !important; }
-        .shimmer { background: #f3f4f6; height: 100px; border-radius: 1.5rem; margin-bottom: 1.5rem; animation: pulse 1.5s infinite; }
-        @keyframes pulse { 0% { opacity: 0.5; } 50% { opacity: 1; } 100% { opacity: 0.5; } }
+
+        .loader-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 3rem 0;
+            width: 100%;
+        }
+        .blue-spinner {
+            width: 42px;
+            height: 42px;
+            border: 4px solid #eff6ff;
+            border-bottom-color: #6366f1;
+            border-radius: 50%;
+            display: inline-block;
+            box-sizing: border-box;
+            animation: rotation 0.8s linear infinite;
+        }
+        @keyframes rotation {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .read-more-btn { color: #6366f1; background: none; border: none; font-weight: 700; font-size: 0.85rem; padding: 0; cursor: pointer; margin-left: 5px; text-decoration: underline; }
+        .dots { color: var(--text-muted); }
+
+        #error-toast {
+            position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+            background: var(--error-red); color: white; padding: 12px 24px;
+            border-radius: 12px; font-weight: 700; z-index: 9999;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1); display: none;
+        }
     </style>
 </head>
 <body>
-
-    <header class="global-container text-center">
-        <h1 class="display-5 title-gradient">IdeaCheck</h1>
-        <p class="text-muted fw-bold small text-uppercase">AI Business Architect</p>
-
-        <nav class="nav-tabs-custom">
-            <button id="nav-validate" class="tab-btn active" onclick="switchMode('validate')">How is my business idea</button>
-            <button id="nav-discover" class="tab-btn" onclick="switchMode('discover')">Find Business Idea</button>
-        </nav>
+    <div id="error-toast"></div>
+    
+    <header class="global-container text-center main-header">
+        <h1 class="fw-800 display-6">
+            Is your <span id="rotating-word">business</span> worth it?
+        </h1>
+        <p class="subtext">See whether you should work on your business idea or not?</p>
     </header>
 
     <main class="global-container">
-        <div id="ui-input-area">
-            <div id="mode-validate">
-                <div class="text-center mb-4">
-                    <h2 class="fw-800 h4">Is your business idea worth it?</h2>
-                    <p class="text-muted small">Analyze any project (SaaS, Etsy, PDFs) for market fit.</p>
-                </div>
-                <div id="error-alert-main" class="alert-box">Write Business or Product or Service Idea</div>
-                <textarea id="ideaInput" rows="4" class="custom-textarea mb-3" placeholder="I want to solve [Problem] by [Solution]. My unique factor is [USP]..."></textarea>
-                <button class="btn-black" onclick="startValidation()">Analyze Idea</button>
-            </div>
-            
-            <div id="mode-discover" class="hidden">
-                <div class="text-center mb-4">
-                    <h2 class="fw-800 h4">Find high-potential opportunities</h2>
-                    <p class="text-muted small">Select a category to find what people actually want.</p>
-                </div>
-                <div class="d-flex flex-wrap justify-content-center gap-2 mb-3 mt-4">
-                    <button class="strategy-badge" onclick="tapNiche('SaaS')">SaaS</button>
-                    <button class="strategy-badge" onclick="tapNiche('Etsy')">Etsy</button>
-                    <button class="strategy-badge" onclick="tapNiche('Digital Goods')">PDFs</button>
-                    <button class="strategy-badge" onclick="tapNiche('Fitness')">Fitness</button>
-                    <button class="strategy-badge" onclick="tapNiche('Education')">Education</button>
-                    <button class="strategy-badge" onclick="tapNiche('Food')">Food</button>
-                    <button class="strategy-badge" onclick="tapNiche('Gaming')">Gaming</button>
+        <div id="chat-phase" class="hidden mt-2">
+            <div id="messages-container"></div>
+            <div id="global-loader" class="hidden">
+                <div class="loader-wrapper">
+                    <span class="blue-spinner"></span>
                 </div>
             </div>
         </div>
 
-        <div id="chat-phase" class="hidden">
-            <div id="error-alert-chat" class="alert-box">Write Business or Product or Service Idea</div>
-            <div id="messages-container"></div>
-            <div id="loading-area" class="hidden">
-                <div class="shimmer"></div>
-            </div>
-            <div id="session-reset-container" class="text-center mt-4 mb-5">
-                <button class="btn btn-link text-muted small text-decoration-none fw-bold" onclick="location.reload()">REFRESH SESSION</button>
-            </div>
+        <div id="ui-input-area" class="mt-4">
+            <textarea id="ideaInput" rows="3" class="custom-textarea mb-3" placeholder="I want to solve [Problem] by [Solution]..."></textarea>
+            <button id="btn-analyze" class="btn-black" onclick="startValidation()">Analyze Idea</button>
         </div>
     </main>
 
-    <script type="module">
+    <script>
         const WORKER_URL = "https://little-queen-f49a.vineetkum25.workers.dev";
+        let affiliateProducts = []; 
+
+        async function fetchTools() {
+            try {
+                const response = await fetch('affiliateData.json');
+                if (!response.ok) throw new Error("Failed to load JSON");
+                affiliateProducts = await response.json();
+            } catch (err) {
+                console.error("JSON Load Error:", err);
+                showError("Configuration error. Please check your JSON file.");
+            }
+        }
+        fetchTools();
+
+        const words = ["business", "Product", "Service"];
+        let wordIndex = 0;
+        const rotateEl = document.getElementById('rotating-word');
+
+        setInterval(() => {
+            rotateEl.classList.add('fade-hidden');
+            setTimeout(() => {
+                wordIndex = (wordIndex + 1) % words.length;
+                rotateEl.innerText = words[wordIndex];
+                rotateEl.classList.remove('fade-hidden');
+            }, 400); 
+        }, 2000);
+
         let chatContext = [];
 
-        const questions = [
-            { id: 'build', label: 'How to build this product or solution?', icon: '🛠️' },
-            { id: 'market', label: 'How to do marketing of this product?', icon: '📈' },
-            { id: 'launch', label: 'How to launch this product to first users?', icon: '🚀' }
-        ];
+        const animObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate-border');
+                    animObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.5 });
 
-        window.switchMode = (mode) => {
-            document.getElementById('nav-validate').classList.toggle('active', mode === 'validate');
-            document.getElementById('nav-discover').classList.toggle('active', mode === 'discover');
-            document.getElementById('mode-validate').classList.toggle('hidden', mode !== 'validate');
-            document.getElementById('mode-discover').classList.toggle('hidden', mode !== 'discover');
-        };
+        function showError(msg) {
+            const toast = document.getElementById('error-toast');
+            toast.innerText = msg;
+            toast.style.display = 'block';
+            setTimeout(() => toast.style.display = 'none', 3500);
+        }
 
-        window.tapNiche = (niche) => {
-            handleQuery(`Explore gaps in ${niche}.`, `Find 3 gaps in ${niche}. No meta-talk.`);
-        };
+        function moveInputToBottom() {
+            const main = document.querySelector('main');
+            const inputArea = document.getElementById('ui-input-area');
+            main.appendChild(inputArea);
+        }
 
-        window.startValidation = () => {
-            const val = document.getElementById('ideaInput').value.trim();
-            if (isInvalidInput(val)) {
-                showValidationError('error-alert-main');
-                return;
-            }
-            if (val) handleQuery(val, getSystemPrompt());
-        };
+        function truncateByWord(text, limit) {
+            const wordsArr = text.split(/\s+/);
+            if (wordsArr.length <= limit) return text;
+            const truncated = wordsArr.slice(0, limit).join(' ');
+            const fullId = 'f-' + Math.random().toString(15).substr(2, 9);
+            const truncId = 't-' + Math.random().toString(15).substr(2, 9);
+            return `<span id="${truncId}">${truncated}</span><span class="dots">...</span><span id="${fullId}" class="hidden">${text}</span><button class="read-more-btn" onclick="toggleReadMore('${truncId}', '${fullId}', this)">Read more</button>`;
+        }
 
-        window.triggerDeepDive = (id) => {
-            const q = questions.find(item => item.id === id);
-            handleQuery(`[INTERNAL_REQUEST] ${q.label}`, getSystemPrompt());
-        };
-
-        window.toggleReadMore = (btn) => {
-            const parent = btn.parentElement;
-            const fullText = parent.querySelector('.full-text');
-            const truncated = parent.querySelector('.truncated-text');
-            const dots = parent.querySelector('.dots');
-            
-            if (fullText.classList.contains('hidden')) {
-                fullText.classList.remove('hidden');
-                truncated.classList.add('hidden');
+        window.toggleReadMore = (truncId, fullId, btn) => {
+            const truncEl = document.getElementById(truncId);
+            const fullEl = document.getElementById(fullId);
+            const dots = truncEl.nextElementSibling;
+            if (fullEl.classList.contains('hidden')) {
+                fullEl.classList.remove('hidden');
+                truncEl.classList.add('hidden');
                 dots.classList.add('hidden');
                 btn.innerText = 'Read less';
             } else {
-                fullText.classList.add('hidden');
-                truncated.classList.remove('hidden');
+                fullEl.classList.add('hidden');
+                truncEl.classList.remove('hidden');
                 dots.classList.remove('hidden');
                 btn.innerText = 'Read more';
             }
         };
 
-        function isInvalidInput(text) {
-            if (!text) return true;
-            const urlPattern = /^(http|https|www\.)/i;
-            const linkPattern = /[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}\/[^\s]*/;
-            return urlPattern.test(text) || linkPattern.test(text);
-        }
-
-        function showValidationError(targetId) {
-            const alert = document.getElementById(targetId);
-            alert.style.display = 'block';
-            setTimeout(() => { alert.style.display = 'none'; }, 3000);
-        }
-
-        function getSystemPrompt() {
-            return `STRICT OUTPUT RULES:
-- NO meta-headers, NO process-text, NO intros.
-- NO markdown characters like ** in your output.
-- If input lacks Problem/Solution/USP: Ask ONE question. NO scoring.
-- Initial Scoreboard:
-  1. "[Problem] Score: X/10" followed by a detailed analysis paragraph.
-  2. "[Idea & USP] Score: X/10" followed by a detailed analysis paragraph.
-  3. "Should you start this: X%" followed by a paragraph explaining if user should invest time & money.
-  4. End with "[BUTTONS: ALL]"
-
-- Deep-Dive: Start with requested title. Bullet points only. Title + explanation.`;
-        }
-
-        async function handleQuery(text, sys) {
-            document.getElementById('ui-input-area').classList.add('hidden');
-            document.getElementById('chat-phase').classList.remove('hidden');
-            const existingInputs = document.querySelectorAll('.inline-input-group');
-            existingInputs.forEach(el => el.remove());
-
-            if (!text.includes("[INTERNAL_REQUEST]")) appendMessage(text, true);
-            const loader = document.getElementById('loading-area');
-            loader.classList.remove('hidden');
-            chatContext.push({ role: "user", parts: [{ text }] });
-
-            try {
-                const response = await fetch(WORKER_URL, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        contents: chatContext,
-                        system_instruction: { parts: [{ text: sys }] }
-                    })
-                });
-                const data = await response.json();
-                const aiText = data.candidates[0].content.parts[0].text;
-                loader.classList.add('hidden');
-                
-                const filtered = aiText
-                    .replace(/\[?(Paragraph analysis|VALIDATION GATE|SCOREBOARD|DEEP-DIVE|STRATEGY RESPONSES|STEP \d|Business Analysis|Target Audience|Pain Points|Unique Value Proposition)\]?:?/gi, '')
-                    .replace(/Does your message clearly explain.*?\?/gi, '')
-                    .replace(/\[INTERNAL_REQUEST\].*?\n/gi, '')
-                    .replace(/\*\*/g, '')
-                    .trim();
-
-                appendMessage(filtered, false);
-                chatContext.push({ role: "model", parts: [{ text: filtered }] });
-            } catch (err) {
-                loader.classList.add('hidden');
-                appendMessage("Connection error.", false);
-            }
-        }
-
-        function appendMessage(text, isUser) {
-            const container = document.getElementById('messages-container');
-            const bubble = document.createElement('div');
-            bubble.className = `chat-bubble ${isUser ? 'bubble-user' : 'bubble-model'}`;
-
-            if (!isUser) {
-                const hasScore = text.includes("Score:");
-                const hasVerdict = text.includes("Should you start this:");
-
-                if (hasScore || hasVerdict) {
-                    bubble.innerHTML = `
-                        <div class="verdict-box">${formatResponse(text)}</div>
-                        <div class="badge-container-wrapper">${renderQuestionButtons()}</div>
-                    `;
-                } else if (text.endsWith('?') || text.includes('clarify')) {
-                    bubble.innerHTML = `${text}<div class="inline-input-group"><input type="text" placeholder="Your answer..." onkeypress="if(event.key==='Enter') window.submitInline(this)"><button class="inline-send-btn" onclick="window.submitInline(this.previousElementSibling)"><svg width="14" height="14" fill="white" viewBox="0 0 16 16"><path d="M15.854.146a.5.5 0 0 1 .11.54l-5.819 14.547a.75.75 0 0 1-1.329.124l-3.178-4.995L.643 7.184a.75.75 0 0 1 .124-1.33L15.314.037a.5.5 0 0 1 .54.11ZM6.636 10.07l2.761 4.338L14.13 2.576 6.636 10.07Z"/></svg></button></div>`;
-                } else {
-                    bubble.innerHTML = formatStrategy(text);
-                }
-            } else {
-                bubble.innerText = text;
-            }
-
-            container.appendChild(bubble);
-            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
-        }
-
-        function renderQuestionButtons() {
-            return questions.map(q => `<button class="strategy-badge" onclick="triggerDeepDive('${q.id}')">${q.icon} ${q.label}</button>`).join('');
-        }
-
-        window.submitInline = (inputEl) => {
-            const val = inputEl.value.trim();
-            if (isInvalidInput(val)) {
-                showValidationError('error-alert-chat');
+        window.startValidation = () => {
+            if (affiliateProducts.length === 0) {
+                showError("Data still loading, please try again in a moment.");
                 return;
             }
-            if (val) handleQuery(val, getSystemPrompt());
+            const val = document.getElementById('ideaInput').value.trim();
+            if (val.length < 5) return;
+            handleQuery(val, "VALIDATE");
         };
 
-        function getQualityTag(scoreStr) {
-            const score = parseInt(scoreStr);
-            if (score >= 95) return "wow amazing";
-            if (score >= 90) return "excellent";
-            if (score >= 85) return "creative & very unique";
-            if (score >= 75) return "very good";
-            if (score >= 60) return "good";
-            return "not good";
-        }
+        window.triggerImprovement = (btn) => {
+            if (btn) {
+                btn.disabled = true;
+                btn.innerText = "✨ Improving...";
+                btn.classList.remove('animate-border');
+            }
+            handleQuery(`[IMPROVE_REQUEST]`, "IMPROVE");
+        };
 
-        function truncateByWord(text, limit) {
-            const words = text.split(/\s+/);
-            if (words.length <= limit) return text;
-            const truncated = words.slice(0, limit).join(' ');
-            return `
-                <span class="truncated-text">${truncated}</span><span class="dots">...</span>
-                <span class="full-text hidden">${text}</span>
-                <button class="read-more-btn" onclick="toggleReadMore(this)">Read more</button>
-            `;
-        }
-
-        function formatResponse(raw) {
-            let processed = raw.replace(/\[BUTTONS:.*?\]/gi, '');
+        function getSystemPrompt(mode) {
+            const toolList = affiliateProducts.map(p => `- ${p.name}: ${p.about} [URL: ${p.affiliate_url}]`).join('\n');
             
-            // Regex to split into sections and handle truncation
-            // Pattern 1: [Problem] Score: X/10 {paragraph}
-            processed = processed.replace(/\[Problem\] Score:\s?(\d+)\/10\s*([\s\S]*?)(?=\[Idea|$)/i, (match, score, para) => {
-                const tag = getQualityTag(score * 10);
-                const truncatedPara = truncateByWord(para.trim(), 25);
-                return `<span class="score-label">The Problem</span><span class="score-value">${score}/10</span><span class="quality-badge">${tag}</span><p class="mt-2 mb-3">${truncatedPara}</p>`;
-            });
+            if (mode === "VALIDATE") {
+                return `Respond ONLY in valid JSON. You are an expert Business Architect. Evaluate the business idea. 
+                Structure:
+                {
+                    "status": "OK" or "UNCLEAR",
+                    "problem": { "score": "X/10", "label": "Bad" | "Average" | "Good" | "Very Good" | "Excellent", "desc": "Approx 40 words." },
+                    "concept": { "score": "X/10", "label": "Bad" | "Average" | "Good" | "Very Good" | "Excellent", "desc": "Approx 40 words." },
+                    "final": { "score": "X%", "label": "Avoid" | "You can Try" | "Yes Absolutely", "desc": "Approx 40 words final verdict." }
+                }`;
+            } else {
+                return `Respond ONLY in valid JSON. Suggest strategic improvements.
+                
+                STRICT CATEGORY TEMPLATE (Titles must be exact):
+                1. "Free Marketing": Strategic advice only.
+                2. "Paid Marketing": Strategic advice only.
+                3. "Features or Benefits Addon": Tactical advice.
+                4. "Tools Which Can Help": Tool-specific recommendations with how to use in this business idea.
 
-            // Pattern 2: [Idea & USP] Score: X/10 {paragraph}
-            processed = processed.replace(/\[Idea & USP\] Score:\s?(\d+)\/10\s*([\s\S]*?)(?=\[Should|Should|$)/i, (match, score, para) => {
-                const tag = getQualityTag(score * 10);
-                const truncatedPara = truncateByWord(para.trim(), 25);
-                return `<span class="score-label">Concept & USP</span><span class="score-value">${score}/10</span><span class="quality-badge">${tag}</span><p class="mt-2 mb-3">${truncatedPara}</p>`;
-            });
-
-            // Pattern 3: Should you start this: X% {paragraph}
-            processed = processed.replace(/Should you start this:\s?([\d%]+)\s*([\s\S]*)/i, (match, pct, para) => {
-                const num = parseInt(pct);
-                const tag = getQualityTag(num);
-                const truncatedPara = truncateByWord(para.trim(), 25);
-                return `<span class="verdict-badge">Should you start this: ${pct} <span class="quality-badge" style="background:#fff; color:#000;">${tag}</span></span><p class="mt-2">${truncatedPara}</p>`;
-            });
-
-            return processed;
+                CRITICAL CONTENT RULES:
+                - CATEGORY 4 MANDATE: Every bullet point MUST start with the tool name formatted as a strict markdown link: [Tool Name](URL).
+                - Do NOT repeat the URL in plain text.
+                - FORMAT EXAMPLE: "[Beehiiv](https://beehiiv.com) - Use this for your newsletters..."
+                - Give detail of how to use this tool in this sbusiness idea.
+                
+                AVAILABLE TOOLS:
+                ${toolList}
+                
+                Required JSON Structure:
+                {
+                    "tips": [
+                        { "title": "Free Marketing", "bullets": ["..."] },
+                        { "title": "Tools Which Can Help", "bullets": ["[Tool Name](URL) - Contextual detail."] }
+                    ]
+                }`;
+            }
         }
 
-        function formatStrategy(text) {
-            const lines = text.split('\n');
-            const isHowTo = lines[0].toLowerCase().includes("how to");
-            let html = isHowTo ? `<div class="strategy-title">${lines[0]}</div>` : '';
-            const contentLines = isHowTo ? lines.slice(1) : lines;
+        async function handleQuery(text, mode) {
+            const loader = document.getElementById('global-loader');
+            loader.classList.remove('hidden');
+            
+            if (mode !== "IMPROVE") {
+                document.getElementById('btn-analyze').disabled = true;
+                document.getElementById('chat-phase').classList.remove('hidden');
+                appendUserBubble(text);
+                document.getElementById('ideaInput').value = ""; 
+                moveInputToBottom();
+            }
 
-            contentLines.forEach(line => {
-                if (line.trim().startsWith('*') || line.trim().match(/^\d\./) || line.trim().startsWith('-')) {
-                    const clean = line.replace(/^[\*\d\.\-\s]+/, '').trim();
-                    const parts = clean.split(':');
-                    if(parts.length > 1) {
-                        html += `<div class="strategy-point"><strong>${parts[0]}</strong> <p>${parts.slice(1).join(':')}</p></div>`;
-                    } else {
-                        html += `<div class="strategy-point">${clean}</div>`;
-                    }
-                } else if(line.trim().length > 0) {
-                    html += `<p class="mb-3">${line}</p>`;
+            chatContext.push({ role: "user", parts: [{ text }] });
+            try {
+                const sys = getSystemPrompt(mode);
+                const res = await fetch(WORKER_URL, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ contents: chatContext, system_instruction: { parts: [{ text: sys }] } })
+                });
+                
+                if (!res.ok) throw new Error("Worker failed");
+                
+                const data = await res.json();
+                const aiRaw = data.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || "";
+                
+                let cleanJson = aiRaw;
+                if (aiRaw.includes("```")) {
+                    const match = aiRaw.match(/\{[\s\S]*\}/);
+                    if (match) cleanJson = match[0];
                 }
+
+                const parsed = JSON.parse(cleanJson);
+
+                loader.classList.add('hidden');
+                document.getElementById('btn-analyze').disabled = false;
+
+                if (parsed.status === "UNCLEAR") {
+                    appendErrorBubble("Your idea seems a bit too brief. Could you explain what problem you're targeting or how your business works?");
+                    chatContext.pop(); 
+                    moveInputToBottom();
+                    return;
+                }
+
+                renderContent(parsed, mode);
+                chatContext.push({ role: "model", parts: [{ text: cleanJson }] });
+                moveInputToBottom();
+            } catch (e) {
+                console.error("Query Error:", e);
+                loader.classList.add('hidden');
+                document.getElementById('btn-analyze').disabled = false;
+                showError("System error. Please try again later.");
+            }
+        }
+
+        // UPDATED: Robust Link Parser
+        function parseLinks(t) {
+            return t.replace(/\[([^\]]+)\]\((https?:\/\/[^\s\)]+)\)/g, (match, name, url) => {
+                return `<a href="${url}" target="_blank" class="affiliate-link">${name}</a>`;
             });
-            return html;
+        }
+
+        function appendUserBubble(text) {
+            const container = document.getElementById('messages-container');
+            const bubble = document.createElement('div');
+            bubble.className = `chat-bubble bubble-user`;
+            bubble.innerText = text;
+            container.appendChild(bubble);
+        }
+
+        function appendErrorBubble(text) {
+            const container = document.getElementById('messages-container');
+            const bubble = document.createElement('div');
+            bubble.className = `chat-bubble bubble-error`;
+            bubble.innerText = text;
+            container.appendChild(bubble);
+        }
+
+        function renderContent(data, mode) {
+            const container = document.getElementById('messages-container');
+            const wrap = document.createElement('div');
+
+            if (mode === "VALIDATE") {
+                const timestamp = Date.now();
+                wrap.innerHTML = `
+                    <div class="section-card">
+                        <div class="verdict-box">
+                            <span class="score-label">The Problem</span>
+                            <span class="score-value">${data.problem.score}</span>
+                            <span class="quality-badge">${data.problem.label}</span>
+                            <div class="content-text" style="font-weight:500; color:var(--text-muted); line-height:1.6">${truncateByWord(data.problem.desc, 15)}</div>
+                        </div>
+                    </div>
+                    <div class="section-card">
+                        <div class="verdict-box">
+                            <span class="score-label">Concept & USP</span>
+                            <span class="score-value">${data.concept.score}</span>
+                            <span class="quality-badge">${data.concept.label}</span>
+                            <div class="content-text" style="font-weight:500; color:var(--text-muted); line-height:1.6">${truncateByWord(data.concept.desc, 15)}</div>
+                        </div>
+                    </div>
+                    <div class="section-card">
+                        <div class="verdict-box">
+                            <span class="score-label">Should You Start</span>
+                            <div class="verdict-badge">
+                                Probability of success: ${data.final.score} 
+                                <span class="quality-badge" style="background:#fff; color:#000; border:none; margin-left: 8px;">${data.final.label}</span>
+                            </div>
+                            <div class="content-text" style="font-weight:500; color:var(--text-muted); line-height:1.6; margin-top:10px">${truncateByWord(data.final.desc, 15)}</div>
+                        </div>
+                    </div>
+                    <div class="badge-container-wrapper">
+                        <button class="improve-btn" id="imp-trigger-${timestamp}">✨ Improve My Idea</button>
+                    </div>
+                `;
+                setTimeout(() => {
+                    const b = document.getElementById(`imp-trigger-${timestamp}`);
+                    if (b) {
+                        animObserver.observe(b);
+                        // Passes "this" to disable on click
+                        b.onclick = function() { window.triggerImprovement(this); };
+                    }
+                }, 100);
+            } else {
+                let h = `<div class="section-card"><h1 style="font-size:1.4rem; font-weight:800; border-bottom:2px solid #eee; padding-bottom:12px; margin-bottom:24px">Improvement Tips & ideas</h1><ol style="padding-left:18px">`;
+                data.tips.forEach(tip => {
+                    if (tip.bullets && tip.bullets.length > 0) {
+                        h += `<li style="margin-bottom:20px; font-weight:700; color:var(--text-main)">${tip.title}<ul style="list-style-type:disc; margin-top:8px; font-weight:400">
+                            ${tip.bullets.map(b => `<li style="margin-bottom:12px; color:#4b5563; font-size:0.95rem">${parseLinks(b)}</li>`).join('')}
+                        </ul></li>`;
+                    }
+                });
+                wrap.innerHTML = h + '</ol></div>';
+            }
+
+            container.appendChild(wrap);
+            // Auto scroll to latest content
+            wrap.scrollIntoView({ behavior: 'smooth' });
         }
     </script>
 </body>
